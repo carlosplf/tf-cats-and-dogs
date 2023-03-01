@@ -12,8 +12,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 DATA_DIR = "./PetImages"
 BATCH_SIZE = 32
-IMG_HEIGHT = 160
-IMG_WIDTH = 160
+IMG_HEIGHT = 224
+IMG_WIDTH = 224
 MODEL_SAVE_PATH = "./model_save/weights"
 CSV_LOG_FILE = "./logs/output_log.csv"
 
@@ -37,7 +37,7 @@ def create_train_dataset():
         horizontal_flip=False,
         validation_split=0.2
     )
-    train_ds = img_gen.flow_from_directory(DATA_DIR, batch_size=BATCH_SIZE, shuffle=True, class_mode='sparse', subset="training", target_size=(IMG_HEIGHT, IMG_WIDTH))
+    train_ds = img_gen.flow_from_directory(DATA_DIR, batch_size=BATCH_SIZE, shuffle=True, class_mode='binary', subset="training", target_size=(IMG_HEIGHT, IMG_WIDTH))
     return train_ds
 
 
@@ -48,7 +48,7 @@ def create_validation_dataset():
         validation_split=0.2
     )
 
-    val_ds = img_gen.flow_from_directory(DATA_DIR, batch_size=BATCH_SIZE, shuffle=True, class_mode='sparse', subset="validation", target_size=(IMG_HEIGHT, IMG_WIDTH))
+    val_ds = img_gen.flow_from_directory(DATA_DIR, batch_size=BATCH_SIZE, shuffle=True, class_mode='binary', subset="validation", target_size=(IMG_HEIGHT, IMG_WIDTH))
     return val_ds
 
 
@@ -87,7 +87,7 @@ def run_training(n_epochs):
     return history.history
 
 
-def predict_from_file(seq_model, img_filename, class_names):
+def predict_from_file(seq_model, img_filename):
     """
     Load an image and predict using the trained Model.
     Args:
@@ -96,6 +96,8 @@ def predict_from_file(seq_model, img_filename, class_names):
     Return: Most likely class and the classification score.
     """
 
+    print("Predicting ", img_filename)
+
     img = tf.keras.preprocessing.image.load_img(
         img_filename, target_size=(IMG_HEIGHT, IMG_WIDTH)
     )
@@ -103,14 +105,13 @@ def predict_from_file(seq_model, img_filename, class_names):
     img_array = tf.expand_dims(img_array, 0)
 
     predictions = seq_model.model.predict(img_array)
-    score = tf.nn.softmax(predictions[0])
 
-    print(
-        "==> PREDICT: This image most likely belongs to {} with a {:.2f} percent confidence."
-        .format(class_names[np.argmax(score)], 100 * np.max(score))
-    )
+    score = predictions[0][0]
 
-    return [class_names[np.argmax(score)], 100 * np.max(score)]
+    if score > 0.5:
+        print("It's a Dog!. Probability: ", score)
+    else:
+        print("It's a Cat!. Probability: ", score)
 
 
 def run_predict(filename):
@@ -118,16 +119,13 @@ def run_predict(filename):
     print("Predicting images...")
 
     # TODO: Loading train_ds just to get number of classes. Need to change that.
-    train_ds = create_train_dataset()
-    class_names = list(train_ds.class_indices.keys())
-    num_classes = len(class_names)
-
+    num_classes = 2
     seq_model = create_model(num_classes)
 
     # Load model weights from Tensorflow saving.
     seq_model.load(MODEL_SAVE_PATH)
     
-    predict_from_file(seq_model, filename, class_names) 
+    predict_from_file(seq_model, filename) 
 
 
 if __name__ == "__main__":
