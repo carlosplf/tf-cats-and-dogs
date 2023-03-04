@@ -12,8 +12,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 DATA_DIR = "./PetImages"
 BATCH_SIZE = 32
-IMG_HEIGHT = 224
-IMG_WIDTH = 224
+IMG_HEIGHT = 160
+IMG_WIDTH = 160
 MODEL_SAVE_PATH = "./model_save/weights"
 CSV_LOG_FILE = "./logs/output_log.csv"
 
@@ -27,6 +27,8 @@ parser.add_argument("--nosave",
                     action="store_true")
 parser.add_argument("-p", "--predict", type=str,
                     help="Predict an image class. -p <IMG_PATH>")
+parser.add_argument("-pa", "--predict_all", type=str,
+                    help="Predict all images inside a folder. -pa <FODLER_PATH>")
 args = parser.parse_args()
 
 
@@ -96,7 +98,7 @@ def predict_from_file(seq_model, img_filename):
     Return: Most likely class and the classification score.
     """
 
-    print("Predicting ", img_filename)
+    print("Filename: ", img_filename)
 
     img = tf.keras.preprocessing.image.load_img(
         img_filename, target_size=(IMG_HEIGHT, IMG_WIDTH)
@@ -125,7 +127,13 @@ def run_predict(filename):
     # Load model weights from Tensorflow saving.
     seq_model.load(MODEL_SAVE_PATH)
     
-    predict_from_file(seq_model, filename) 
+    predict_from_file(seq_model, filename)
+
+
+def run_predict_all(folder_path):
+
+    for f in os.listdir(folder_path):
+        run_predict(folder_path + "/" + f)
 
 
 if __name__ == "__main__":
@@ -135,3 +143,6 @@ if __name__ == "__main__":
 
     if args.predict:
         run_predict(args.predict)
+    
+    if args.predict_all:
+        run_predict_all(args.predict_all)
