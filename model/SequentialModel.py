@@ -11,14 +11,6 @@ class SequentialModel:
         self.model = None
 
     def build(self, img_height, img_width, num_classes):
-        # Apply some random changes to images to avoid local optimizations and overfit.
-        data_augmentation = keras.Sequential(
-            [
-                layers.experimental.preprocessing.RandomCrop(round(img_height*0.8), round(img_width*0.8)),
-                layers.experimental.preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=None, name=None)
-            ]
-        )
-
         self.model = Sequential([
             layers.Conv2D(16, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
             layers.MaxPooling2D((2, 2)),
