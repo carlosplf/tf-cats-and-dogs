@@ -15,8 +15,9 @@ PetImages/*
 # Images for testing
 test_images/*
 
-# Log CSVs
+# Log and CSVs
 logs/*
+out.txt
 
 .DS_Store
 
