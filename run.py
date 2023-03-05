@@ -2,6 +2,7 @@ import tensorflow as tf
 import os
 import argparse
 import numpy as np
+import logging
 
 from model.SequentialModel import SequentialModel
 from csv_log_writer import csv_log_writer
@@ -11,9 +12,9 @@ from csv_log_writer import csv_log_writer
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 DATA_DIR = "./PetImages"
-BATCH_SIZE = 64
-IMG_HEIGHT = 120
-IMG_WIDTH = 120
+BATCH_SIZE = 8
+IMG_HEIGHT = 224
+IMG_WIDTH = 224
 MODEL_SAVE_PATH = "./model_save/weights"
 CSV_LOG_FILE = "./logs/output_log.csv"
 
@@ -24,6 +25,9 @@ parser.add_argument("-t", "--train", type=int,
                     help="Train the model using N epochs.")
 parser.add_argument("--nosave",
                     help="Set no_save flag. Trained models won't be saved.",
+                    action="store_true")
+parser.add_argument("--vgg16",
+                    help="Use the Keras VGG16 model.",
                     action="store_true")
 parser.add_argument("-p", "--predict", type=str,
                     help="Predict an image class. -p <IMG_PATH>")
@@ -39,7 +43,14 @@ def create_train_dataset():
         horizontal_flip=False,
         validation_split=0.2
     )
-    train_ds = img_gen.flow_from_directory(DATA_DIR, batch_size=BATCH_SIZE, shuffle=True, class_mode='binary', subset="training", target_size=(IMG_HEIGHT, IMG_WIDTH))
+    train_ds = img_gen.flow_from_directory(
+        DATA_DIR,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        class_mode='binary',
+        subset="training",
+        target_size=(IMG_HEIGHT, IMG_WIDTH)
+    )
     return train_ds
 
 
@@ -50,13 +61,25 @@ def create_validation_dataset():
         validation_split=0.2
     )
 
-    val_ds = img_gen.flow_from_directory(DATA_DIR, batch_size=BATCH_SIZE, shuffle=True, class_mode='binary', subset="validation", target_size=(IMG_HEIGHT, IMG_WIDTH))
+    val_ds = img_gen.flow_from_directory(
+        DATA_DIR,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        class_mode='binary',
+        subset="validation",
+        target_size=(IMG_HEIGHT, IMG_WIDTH)
+    )
     return val_ds
 
 
 def create_model(num_classes):
     seq_model = SequentialModel()
-    seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
+
+    if args.vgg16:
+        logging.warning("VGG16 model uses a significant bigger amount of memory. Check hardware and batch size.")
+        seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
+    else:
+        seq_model.build(IMG_HEIGHT, IMG_WIDTH)
     return seq_model
 
 
@@ -71,7 +94,7 @@ def train_model(n_epochs, seq_model, train_ds, val_ds):
 
 def run_training(n_epochs):
     
-    print("Starting training...")
+    logging.info("Starting training...")
    
     train_ds = create_train_dataset()
     val_ds = create_validation_dataset()
@@ -95,10 +118,11 @@ def predict_from_file(seq_model, img_filename):
     Args:
         seq_model: SequentialModel class instance.
         img_filename: name of the img file to be loaded.
-    Return: Most likely class and the classification score.
+    Return:
+        (float) classification score.
     """
 
-    print("Filename: ", img_filename)
+    logging.info("Filename: ", img_filename)
 
     img = tf.keras.preprocessing.image.load_img(
         img_filename, target_size=(IMG_HEIGHT, IMG_WIDTH)
@@ -110,15 +134,17 @@ def predict_from_file(seq_model, img_filename):
 
     score = predictions[0][0]*100
 
-    if score > 0.5:
-        print("It's a Dog!. Probability: ", score, "%")
+    if score > 50:
+        logging.info("It's a Dog!. Probability: ", score, "%")
     else:
-        print("It's a Cat!. Probability: ", score, "%")
+        logging.info("It's a Cat!. Probability: ", score, "%")
+    
+    return score
 
 
 def run_predict(filename):
 
-    print("Predicting all images...")
+    logging.info("Predicting all images...")
 
     num_classes = 2
     seq_model = create_model(num_classes)
@@ -131,7 +157,7 @@ def run_predict(filename):
 
 def run_predict_all(folder_path):
 
-    print("Predicting all images...")
+    logging.info("Predicting all images...")
 
     num_classes = 2
     seq_model = create_model(num_classes)
@@ -144,6 +170,8 @@ def run_predict_all(folder_path):
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(level=logging.INFO)
     
     if args.train:
         run_training(args.train)

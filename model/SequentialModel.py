@@ -23,6 +23,7 @@ class SequentialModel:
             img_height, img_width: image target size.
         Return: None.
         """
+        print("Building VGG16 model...")
         model = VGG16(include_top=False, input_shape=(img_height, img_width, 3))
         
         # Mark loaded layers as not trainable
@@ -40,7 +41,8 @@ class SequentialModel:
         
         self.model = model
 
-    def build(self, img_height, img_width, num_classes):
+    def build(self, img_height, img_width):
+        print("Building custom model...")
         model = Sequential([
             layers.Conv2D(32, (3, 3), activation='relu'),
             layers.MaxPooling2D((2, 2)),
