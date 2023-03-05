@@ -11,9 +11,9 @@ from csv_log_writer import csv_log_writer
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 DATA_DIR = "./PetImages"
-BATCH_SIZE = 32
-IMG_HEIGHT = 160
-IMG_WIDTH = 160
+BATCH_SIZE = 64
+IMG_HEIGHT = 120
+IMG_WIDTH = 120
 MODEL_SAVE_PATH = "./model_save/weights"
 CSV_LOG_FILE = "./logs/output_log.csv"
 
@@ -56,7 +56,7 @@ def create_validation_dataset():
 
 def create_model(num_classes):
     seq_model = SequentialModel()
-    seq_model.build(IMG_HEIGHT, IMG_WIDTH, num_classes)
+    seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
     return seq_model
 
 
@@ -108,19 +108,18 @@ def predict_from_file(seq_model, img_filename):
 
     predictions = seq_model.model.predict(img_array)
 
-    score = predictions[0][0]
+    score = predictions[0][0]*100
 
     if score > 0.5:
-        print("It's a Dog!. Probability: ", score)
+        print("It's a Dog!. Probability: ", score, "%")
     else:
-        print("It's a Cat!. Probability: ", score)
+        print("It's a Cat!. Probability: ", score, "%")
 
 
 def run_predict(filename):
 
-    print("Predicting images...")
+    print("Predicting all images...")
 
-    # TODO: Loading train_ds just to get number of classes. Need to change that.
     num_classes = 2
     seq_model = create_model(num_classes)
 
@@ -132,8 +131,16 @@ def run_predict(filename):
 
 def run_predict_all(folder_path):
 
+    print("Predicting all images...")
+
+    num_classes = 2
+    seq_model = create_model(num_classes)
+
+    # Load model weights from Tensorflow saving.
+    seq_model.load(MODEL_SAVE_PATH)
+    
     for f in os.listdir(folder_path):
-        run_predict(folder_path + "/" + f)
+        predict_from_file(seq_model, folder_path + "/" + f)
 
 
 if __name__ == "__main__":
