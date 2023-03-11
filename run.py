@@ -1,7 +1,6 @@
 import tensorflow as tf
 import os
 import argparse
-import numpy as np
 import logging
 
 from model.SequentialModel import SequentialModel
