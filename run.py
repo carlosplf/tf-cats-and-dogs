@@ -6,13 +6,14 @@ import logging
 
 from model.SequentialModel import SequentialModel
 from csv_log_writer import csv_log_writer
+from file_checker import file_checker
 
 
 # Adjust TF log level and avoid INFO messages.
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 DATA_DIR = "./PetImages"
-BATCH_SIZE = 8
+BATCH_SIZE = 64
 IMG_HEIGHT = 224
 IMG_WIDTH = 224
 MODEL_SAVE_PATH = "./model_save/weights"
@@ -33,6 +34,8 @@ parser.add_argument("-p", "--predict", type=str,
                     help="Predict an image class. -p <IMG_PATH>")
 parser.add_argument("-pa", "--predict_all", type=str,
                     help="Predict all images inside a folder. -pa <FODLER_PATH>")
+parser.add_argument("--check_images", type=str,
+                    help="Check if images in specified folder are not corrupted.")
 args = parser.parse_args()
 
 
@@ -172,6 +175,9 @@ def run_predict_all(folder_path):
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
+    
+    if args.check_images:
+        file_checker.check_images(args.check_images)
     
     if args.train:
         run_training(args.train)
