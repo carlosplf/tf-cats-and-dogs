@@ -24,19 +24,18 @@ class SequentialModel:
         Return: None.
         """
         print("Building VGG16 model...")
-        model = VGG16(include_top=False, input_shape=(img_height, img_width, 3))
+        base_model = VGG16(weights="imagenet", include_top=False, input_shape=(img_height, img_width, 3))
+        base_model.trainable = False
         
-        # Mark loaded layers as not trainable
-        for layer in model.layers:
-            layer.trainable = False
-        
-        flat1 = Flatten()(model.layers[-1].output)
-        class1 = Dense(128, activation='relu', kernel_initializer='he_uniform')(flat1)
-        output = Dense(1, activation='sigmoid')(class1)
-        
-        model = Model(inputs=model.inputs, outputs=output)
+        model = Sequential([
+            base_model,
+            layers.Flatten(),
+            layers.Dense(256, activation='relu'),
+            layers.Dense(128, activation='relu'),
+            layers.Dense(1, activation='sigmoid')
+        ])
 
-        opt = SGD(lr=0.001, momentum=0.9)
+        opt = SGD(learning_rate=0.001, momentum=0.9)
         model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
         
         self.model = model
