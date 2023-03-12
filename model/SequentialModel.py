@@ -44,14 +44,28 @@ class SequentialModel:
     def build(self, img_height, img_width):
         print("Building custom model...")
         model = Sequential([
-            layers.Conv2D(32, (3, 3), activation='relu'),
-            layers.MaxPooling2D((2, 2)),
+            layers.Conv2D(input_shape=(img_height,img_width,3),filters=64,kernel_size=(3,3),padding="same", activation="relu"),
             layers.Conv2D(64, (3, 3), activation='relu'),
             layers.MaxPooling2D((2, 2)),
             layers.Conv2D(128, (3, 3), activation='relu'),
+            layers.Conv2D(128, (3, 3), activation='relu'),
+            layers.MaxPooling2D((2, 2)),
+            layers.Conv2D(256, (3, 3), activation='relu'),
+            layers.Conv2D(256, (3, 3), activation='relu'),
+            layers.Conv2D(256, (3, 3), activation='relu'),
+            layers.MaxPooling2D((2, 2)),
+            layers.Conv2D(512, (3, 3), activation='relu'),
+            layers.Conv2D(512, (3, 3), activation='relu'),
+            layers.Conv2D(512, (3, 3), activation='relu'),
+            layers.MaxPooling2D((2, 2)),
+            layers.Conv2D(512, (3, 3), activation='relu'),
+            layers.Conv2D(512, (3, 3), activation='relu'),
+            layers.Conv2D(512, (3, 3), activation='relu'),
             layers.MaxPooling2D((2, 2)),
             layers.Flatten(),
-            layers.Dense(512, activation='relu'),
+            layers.Dense(4096, activation='relu'),
+            layers.Dropout(0.5),
+            layers.Dense(4096, activation='relu'),
             layers.Dense(1, activation='sigmoid')
         ])
 
