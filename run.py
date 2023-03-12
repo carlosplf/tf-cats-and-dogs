@@ -35,6 +35,9 @@ parser.add_argument("-pa", "--predict_all", type=str,
                     help="Predict all images inside a folder. -pa <FODLER_PATH>")
 parser.add_argument("--check_images", type=str,
                     help="Check if images in specified folder are not corrupted.")
+parser.add_argument("--debug",
+                    help="Change log level to DEBUG.",
+                    action="store_true")
 args = parser.parse_args()
 
 
@@ -43,7 +46,7 @@ def create_train_dataset():
     img_gen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1./255,
         horizontal_flip=False,
-        validation_split=0.2
+        validation_split=0.25
     )
     train_ds = img_gen.flow_from_directory(
         DATA_DIR,
@@ -60,7 +63,7 @@ def create_validation_dataset():
     img_gen = tf.keras.preprocessing.image.ImageDataGenerator(
         rescale=1./255,
         horizontal_flip=False,
-        validation_split=0.2
+        validation_split=0.25
     )
 
     val_ds = img_gen.flow_from_directory(
@@ -124,7 +127,7 @@ def predict_from_file(seq_model, img_filename):
         (float) classification score.
     """
 
-    logging.info("Filename: ", img_filename)
+    logging.info("Filename: " + img_filename)
 
     img = tf.keras.preprocessing.image.load_img(
         img_filename, target_size=(IMG_HEIGHT, IMG_WIDTH)
@@ -137,9 +140,9 @@ def predict_from_file(seq_model, img_filename):
     score = predictions[0][0]*100
 
     if score > 50:
-        logging.info("It's a Dog!. Probability: ", score, "%")
+        logging.info("It's a Dog!. Probability: " + str(score) + "%")
     else:
-        logging.info("It's a Cat!. Probability: ", score, "%")
+        logging.info("It's a Cat!. Probability: " + str(score) + "%")
     
     return score
 
@@ -174,6 +177,9 @@ def run_predict_all(folder_path):
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
+
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
     
     if args.check_images:
         file_checker.check_images(args.check_images)
