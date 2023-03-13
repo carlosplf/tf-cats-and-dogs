@@ -77,7 +77,7 @@ def create_validation_dataset():
     return val_ds
 
 
-def create_model(num_classes):
+def create_model():
     seq_model = SequentialModel()
 
     if args.vgg16:
