@@ -103,9 +103,8 @@ def run_training(n_epochs):
    
     train_ds = create_train_dataset()
     val_ds = create_validation_dataset()
-    num_classes = len(list(train_ds.class_indices.keys()))
 
-    seq_model = create_model(num_classes)
+    seq_model = create_model()
 
     history = train_model(n_epochs, seq_model, train_ds, val_ds)
     
@@ -151,8 +150,7 @@ def run_predict(filename):
 
     logging.info("Predicting all images...")
 
-    num_classes = 2
-    seq_model = create_model(num_classes)
+    seq_model = create_model()
 
     # Load model weights from Tensorflow saving.
     seq_model.load(MODEL_SAVE_PATH)
@@ -164,8 +162,7 @@ def run_predict_all(folder_path):
 
     logging.info("Predicting all images...")
 
-    num_classes = 2
-    seq_model = create_model(num_classes)
+    seq_model = create_model()
 
     # Load model weights from Tensorflow saving.
     seq_model.load(MODEL_SAVE_PATH)
