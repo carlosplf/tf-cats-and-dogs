@@ -35,7 +35,13 @@ optional arguments:
 
 ```
 
-The software contains two Sequential Model implementations. One is a custom Model build, based on the Keras VGG16 implementation, and the
-other is the original Keras VGG16 Model.
+Just run `run.py -t <n_epochs>` to train the model running all the images on the dataset, where <n_epochs> is the the number of times the software will go through the dataset.
 
-To use the original Keras VGG16 Model, use the `--vgg16` argument.
+You can use `run.py -p <img_path>` to predict a single image, trying to tell if it is a cat or a dog. If you have a folder with some photos of cats and dogs, you can use `run.py -pa <folder_path>` and the software will try to predict all the images inside this folder.
+
+## Models
+
+The software contains two CNN Sequential Model implementations. One is a custom Model build, based on the Keras VGG16 implementation, and the
+other is the [original Keras VGG16 Model](https://keras.io/api/applications/vgg/).
+
+To use the original Keras VGG16 Model, just use the `--vgg16` argument when calling `run.py`.
