@@ -8,6 +8,7 @@ __pycache__/
 
 # Saved model
 model_save/*
+model/model_save/*
 
 # PatImages folder
 PetImages/*
