@@ -12,7 +12,11 @@ ml_router = Blueprint("ml_router", __name__)
 def test_ml_runner(model_name):
     data = request.get_json()
     n_epochs = data.get("n_epochs", 0)
+
     if(n_epochs <= 0 or n_epochs > MAX_EPOCHS):
         return {"status": "Not running", "reason": "invalid n_epochs key"}
     else:
-        return {"status": "Running"}
+        if ml.run_training(model_name, n_epochs):
+            return {"status": "Running"}
+        else:
+            return {"status": "Not running", "reason": "Can't start thread."}

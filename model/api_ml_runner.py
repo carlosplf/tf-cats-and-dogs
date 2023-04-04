@@ -2,6 +2,7 @@ import tensorflow as tf
 import os
 import argparse
 import logging
+import threading
 
 from model.SequentialModel import SequentialModel
 from csv_log_writer import csv_log_writer
@@ -19,6 +20,15 @@ IMG_WIDTH = 224
 MODEL_SAVE_PATH = "./model_save/weights"
 CSV_LOG_FILE = "./logs/output_log.csv"
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("debug.log"),
+        logging.StreamHandler()
+    ]
+)
 
 def create_train_dataset():
     img_gen = tf.keras.preprocessing.image.ImageDataGenerator(
@@ -81,9 +91,6 @@ def train_model(n_epochs, seq_model, train_ds, val_ds):
 
 def run_training(model_name, n_epochs):
 
-    #TODO: training should run in new thread, and this method should return
-    # the API request as soon as possible.
-    
     logging.info("Starting training...")
    
     train_ds = create_train_dataset()
@@ -94,13 +101,34 @@ def run_training(model_name, n_epochs):
     if seq_model is None:
         return None
 
+    new_thread = threading.Thread(
+        target=training_function,
+        args=(seq_model, n_epochs, train_ds, val_ds),
+        daemon=True
+    )
+
+    try:
+        logging.debug("Starting a new thread for training...")
+        new_thread.start()
+        return True
+    except Exception as e:
+        logging.error(str(e))
+        return False
+
+
+def training_function(seq_model, n_epochs, train_ds, val_ds):
+
+    logging.info("Training function running...")
+    
     history = train_model(n_epochs, seq_model, train_ds, val_ds)
     
     seq_model.save(MODEL_SAVE_PATH) 
 
     csv_log_writer.write_log(history.history, CSV_LOG_FILE)
 
-    return history.history
+    logging.info("Finished training.")
+
+    return True
 
 
 def predict_from_file(seq_model, img_filename):
