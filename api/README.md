@@ -4,6 +4,8 @@
 
 It is possible to train and use the model for predictions through an API.
 
+![API software schema](./schema.svg)
+
 ### Routes
 
 `POST /model/<model_name>/train/<number_of_epochs>`
