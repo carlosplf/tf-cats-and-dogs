@@ -55,15 +55,19 @@ def create_validation_dataset():
     return val_ds
 
 
-def create_model():
+def create_model(model_name):
     seq_model = SequentialModel()
 
-    if args.vgg16:
+    if model_name == "vgg16":
         logging.warning("VGG16 model uses a significant bigger amount of memory. Check hardware and batch size.")
         seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
-    else:
+        return seq_model
+
+    if model_name == "custom":
         seq_model.build(IMG_HEIGHT, IMG_WIDTH)
-    return seq_model
+        return seq_model
+
+    return None
 
 
 def train_model(n_epochs, seq_model, train_ds, val_ds):
@@ -75,19 +79,24 @@ def train_model(n_epochs, seq_model, train_ds, val_ds):
     return history
 
 
-def run_training(n_epochs):
+def run_training(model_name, n_epochs):
+
+    #TODO: training should run in new thread, and this method should return
+    # the API request as soon as possible.
     
     logging.info("Starting training...")
    
     train_ds = create_train_dataset()
     val_ds = create_validation_dataset()
 
-    seq_model = create_model()
+    seq_model = create_model(model_name)
+
+    if seq_model is None:
+        return None
 
     history = train_model(n_epochs, seq_model, train_ds, val_ds)
     
-    if not args.nosave:
-        seq_model.save(MODEL_SAVE_PATH) 
+    seq_model.save(MODEL_SAVE_PATH) 
 
     csv_log_writer.write_log(history.history, CSV_LOG_FILE)
 
@@ -124,23 +133,29 @@ def predict_from_file(seq_model, img_filename):
     return score
 
 
-def run_predict(filename):
+def run_predict(model_name, filename):
 
     logging.info("Predicting all images...")
 
-    seq_model = create_model()
+    seq_model = create_model(model_name)
 
     # Load model weights from Tensorflow saving.
     seq_model.load(MODEL_SAVE_PATH)
     
+    if seq_model is None:
+        return None
+    
     predict_from_file(seq_model, filename)
 
 
-def run_predict_all(folder_path):
+def run_predict_all(model_name, folder_path):
 
     logging.info("Predicting all images...")
 
-    seq_model = create_model()
+    seq_model = create_model(model_name)
+    
+    if seq_model is None:
+        return None
 
     # Load model weights from Tensorflow saving.
     seq_model.load(MODEL_SAVE_PATH)
