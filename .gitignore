@@ -16,6 +16,9 @@ PetImages/*
 # Images for testing
 test_images/*
 
+# API status
+status_control/*.json
+
 # Log and CSVs
 logs/*
 out.txt
