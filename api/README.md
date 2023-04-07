@@ -14,9 +14,9 @@ Using this route, you can run a model training routine. Where `<model_name>` is 
 
 When this route is called, the software will create a new thread to run the training and answer the client request with the status.
 
-#### Payload:
-
 ```
+PAYLOAD:
+
 {"n_epochs":  <number_of_epochs>}
 ```
 
@@ -24,9 +24,12 @@ When this route is called, the software will create a new thread to run the trai
 
 Use this route to ask for the `<model_name>`to predict an image if it is a Cat or Dog.
 
-
-#### Payload:
-
 ```
+PAYLOAD:
+
 {"upload_file":  <file.jpeg>}
 ```
+
+`GET /model/<pid>/status`
+
+Using the thread PID returned by the API, ask for the status of a thread and training process.
