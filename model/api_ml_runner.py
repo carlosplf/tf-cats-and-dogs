@@ -3,7 +3,9 @@ import os
 import argparse
 import logging
 import threading
+import json
 
+from random import randrange
 from model.SequentialModel import SequentialModel
 from csv_log_writer import csv_log_writer
 from file_checker import file_checker
@@ -19,6 +21,7 @@ IMG_HEIGHT = 224
 IMG_WIDTH = 224
 MODEL_SAVE_PATH = "./model_save/weights"
 CSV_LOG_FILE = "./logs/output_log.csv"
+STATUS_FILES_FOLDER = "status_control"
 
 
 logging.basicConfig(
@@ -89,6 +92,11 @@ def train_model(n_epochs, seq_model, train_ds, val_ds):
     return history
 
 
+def create_pid():
+    max_pid_value = 1000000
+    return randrange(max_pid_value)
+
+
 def run_training(model_name, n_epochs):
 
     logging.info("Starting training...")
@@ -101,24 +109,57 @@ def run_training(model_name, n_epochs):
     if seq_model is None:
         return None
 
+    thread_pid = create_pid()
+
     new_thread = threading.Thread(
         target=training_function,
-        args=(seq_model, n_epochs, train_ds, val_ds),
+        args=(
+            thread_pid,
+            seq_model,
+            n_epochs,
+            train_ds,
+            val_ds
+        ),
         daemon=True
     )
-
+    
     try:
         logging.debug("Starting a new thread for training...")
         new_thread.start()
-        return True
+        return thread_pid 
     except Exception as e:
         logging.error(str(e))
-        return False
+        return None
 
 
-def training_function(seq_model, n_epochs, train_ds, val_ds):
+def write_status_to_file(pid, status):
+    filename = STATUS_FILES_FOLDER + "/" + str(pid) + "_status.json"
+    with open(filename, 'w') as f:
+        json.dump(status, f)
+
+
+def get_pid_status(pid):
+    filename = STATUS_FILES_FOLDER + "/" + str(pid) + "_status.json"
+    try:
+        with open(filename) as f:
+            return json.load(f)
+    except Exception as e:
+        logging.warning("Error while searching for status pid " + str(pid))
+        return None
+
+
+def training_function(thread_pid, seq_model, n_epochs, train_ds, val_ds):
 
     logging.info("Training function running...")
+    logging.info("PID: " + str(thread_pid))
+
+    status = {
+        "status": "Running",
+        "Message": "training...",
+        "Pid": thread_pid
+    }
+
+    write_status_to_file(thread_pid, status)
     
     history = train_model(n_epochs, seq_model, train_ds, val_ds)
     
@@ -127,6 +168,15 @@ def training_function(seq_model, n_epochs, train_ds, val_ds):
     csv_log_writer.write_log(history.history, CSV_LOG_FILE)
 
     logging.info("Finished training.")
+    
+    status = {
+        "status": "Stopped",
+        "Message": "Finished training",
+        "Values": history.history,
+        "Pid": thread_pid
+    }
+
+    write_status_to_file(thread_pid, status)
 
     return True
 
@@ -163,7 +213,7 @@ def predict_from_file(seq_model, img_filename):
 
 def run_predict(model_name, filename):
 
-    logging.info("Predicting all images...")
+    logging.info("Predicting image...")
 
     seq_model = create_model(model_name)
 
@@ -173,7 +223,7 @@ def run_predict(model_name, filename):
     if seq_model is None:
         return None
     
-    predict_from_file(seq_model, filename)
+    return predict_from_file(seq_model, filename)
 
 
 def run_predict_all(model_name, folder_path):
