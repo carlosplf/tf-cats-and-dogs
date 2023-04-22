@@ -5,7 +5,7 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  box-shadow: inset 0 0 0 1000px rgba(0,0,0,.6);
+  box-shadow: inset 0 0 0 1000px rgba(0,0,0,.5);
   background-image: url('./background/background-1.png');
 }
 
@@ -25,15 +25,17 @@
   color: #FFF;
 }
 
-#SubmitButton {
+.SendFile {
   position: fixed;
   bottom: 0%;
   margin-bottom: 8%;
-  min-height: 80px;
+  min-height: 60px;
   min-width: 400px;
   margin-left: 10%;
   background-image: linear-gradient(to right, #EE34D2 0%, #5946B2  51%, #5DADEC  100%);
-  padding: 10px 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 30px;
   text-align: center;
   text-transform: uppercase;
   transition: 0.5s;
@@ -47,7 +49,7 @@
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-#SubmitButton:hover {
+.SendFile:hover {
   background-position: right center;
   color: #fff;
   text-decoration: none;
