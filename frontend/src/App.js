@@ -24,7 +24,6 @@ function App() {
         }
             
         console.log("Sending to API...");
-        console.log(file);
 
         const data = new FormData();
 
