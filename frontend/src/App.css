@@ -20,8 +20,16 @@
 .SubTitle {
   min-width: 100%;
   margin-top: 0%;
-  font-size: 1.8em;
+  font-size: 1.6em;
   margin-left: 10%;
+  color: #FFF;
+}
+
+.Answer {
+  min-width: 100%;
+  margin-top: 10%;
+  font-size: 4.8em;
+  text-align: center;
   color: #FFF;
 }
 
@@ -72,6 +80,11 @@
 
 .Header p{
   padding-right: 6%;
+}
+
+.HeaderLink {
+  color: #FFF;
+  text-decoration: none;
 }
 
 @media only screen
