@@ -1,5 +1,6 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import { Oval } from 'react-loading-icons'
 
 
 function App() {
@@ -10,13 +11,36 @@ function App() {
         if (e.target.files) {
             setFile(e.target.files[0]);
             setAnimal("");
-            console.log("Hello!");
         }
     }
 
     useEffect(()=> {
+        //When some state is changed, this hook is called.
         uploadImage();
     })
+
+    const get_answer = () => {
+        if(cat_dog === "" && !file){
+            return(
+                <p></p>
+            );
+        }
+        else if (cat_dog === "" && file){
+            return(
+                <div className="Loading">
+                    <Oval strokeWidth={4}/>
+                    <p>Loading...</p>
+                </div>
+            );
+        }
+        else{
+            return(
+                <div className="Answer">
+                    <p>It's a {cat_dog}!</p>
+                </div>
+            );
+        }
+    }
 
     const uploadImage = () => {
         if (!file) {
@@ -25,7 +49,6 @@ function App() {
         }
 
         if (cat_dog !== ""){
-            console.log("Image already sent.")
             return;
         }
             
@@ -61,16 +84,16 @@ function App() {
     return (
         <div className="App">
             <div className="Header">
-                <p>Model</p>
-                <p><a className="HeaderLink" href="#">GitHub</a></p>
-                <p>About</p>
+                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">Model</a></p>
+                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">GitHub</a></p>
+                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">About</a></p>
             </div>
             <h1 className="Title">Cats and Dogs!</h1>
             <h2 className="SubTitle">Is it a Cat or a Dog?</h2>
-            <h2 className="Answer">{cat_dog}</h2>
+            {get_answer()}
             <div>
                 <label htmlFor="inputFile" className="SendFile">Select Image</label>
-                <input type="file" name="file" id="inputFile" style={{"visibility": "hidden"}} onChange={handleFileChange}/>
+                <input type="file" name="file" id="inputFile" accept=".jpeg, .jpg" style={{"visibility": "hidden"}} onChange={handleFileChange}/>
             </div>
         </div>
     );
