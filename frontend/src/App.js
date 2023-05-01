@@ -96,7 +96,7 @@ function App() {
         const data = new FormData();
 
         data.append("upload_file", file);
-        data.append("Test", "Test text");
+        data.append("Message", "Uploading image request.");
 
         const api_address = process.env.REACT_APP_API_ADDRESS;
 
