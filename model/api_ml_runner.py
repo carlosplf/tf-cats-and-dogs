@@ -7,7 +7,6 @@ import json
 
 from random import randrange
 from model.SequentialModel import SequentialModel
-from model.CustomCallback import CustomCallback
 from csv_log_writer import csv_log_writer
 from file_checker import file_checker
 
@@ -92,7 +91,6 @@ class APIMLRunner:
             train_ds,
             validation_data=val_ds,
             epochs=n_epochs,
-            callbacks=[CustomCallback()]
         )
         return history
 
