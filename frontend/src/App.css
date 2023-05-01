@@ -20,7 +20,7 @@
 .SubTitle {
   min-width: 100%;
   margin-top: 0%;
-  font-size: 1.6em;
+  font-size: 1.4em;
   margin-left: 10%;
   color: #FFF;
 }
@@ -28,10 +28,9 @@
 .Answer {
   min-width: 100%;
   margin-top: 12%;
-  font-size: 3.8em;
+  font-size: 2.4em;
   margin-left: 10%;
   color: #FFF;
-  text-decoration: underline;
 }
 
 .Loading {
@@ -42,26 +41,21 @@
 }
 
 .SendFile {
+  display: flex;
+  direction: column;
   position: fixed;
   bottom: 0%;
   margin-bottom: 6%;
-  min-height: 50px;
+  min-height: 80px;
   min-width: 400px;
   margin-left: 10%;
   background-image: linear-gradient(to right, #EE34D2 0%, #5946B2  51%, #5DADEC  100%);
-  padding-right: 10px;
-  padding-left: 10px;
-  padding-top: 22px;
-  text-align: center;
-  text-transform: uppercase;
   transition: 0.5s;
   background-size: 200% auto;
   color: white;
   border-radius: 10px;
-  display: block;
   border-style: none;
   cursor: pointer;
-  font-size: 1.4em;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
@@ -70,6 +64,20 @@
   color: #fff;
   text-decoration: none;
   color: #202020;
+}
+
+#sendLabel {
+  text-transform: uppercase;
+  font-size: 1.4em;
+  margin: auto;
+  margin-left: -100px;
+  cursor: pointer;
+}
+
+#sendIcon {
+  font-size: 1.6em;
+  margin: auto;
+  cursor: pointer;
 }
 
 .Header {
@@ -116,11 +124,25 @@
     .App {
       background-image: url("./background/background-1-mobile.png");
     }
+    
     .SendFile {
       margin-bottom: 25%;
       margin-left: 10%;
-      min-width: 70%;
+      min-width: 80%;
     }
+    
+    #sendLabel {
+      text-transform: uppercase;
+      font-size: 1.6em;
+      margin: auto;
+      margin-left: -10px;
+    }
+    
+    #sendIcon {
+      font-size: 1.6em;
+      margin: auto;
+    }
+
     .Title {
       min-width: 50%;
       max-width: 90%;
@@ -129,13 +151,15 @@
       margin-left: 10%;
       color: #FFF;
     }
+    
     .SubTitle {
-      min-width: 100%;
+      min-width: 400px;
       margin-top: 20%;
-      font-size: 1.8em;
+      font-size: 1.2em;
       margin-left: 10%;
       color: #FFF;
     }
+    
     .Header p{
       font-size: 1.4em;
     }
