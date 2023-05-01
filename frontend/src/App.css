@@ -1,0 +1,166 @@
+.App {
+  position: fixed;
+  min-width: 100%;
+  min-height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  box-shadow: inset 0 0 0 1000px rgba(0,0,0,.5);
+  background-image: url('./background/background-1.png');
+}
+
+.Title {
+  min-width: 100%;
+  margin-top: 10%;
+  font-size: 4.2em;
+  margin-left: 10%;
+  color: #FFF;
+}
+
+.SubTitle {
+  min-width: 100%;
+  margin-top: 0%;
+  font-size: 1.4em;
+  margin-left: 10%;
+  color: #FFF;
+}
+
+.Answer {
+  min-width: 100%;
+  margin-top: 12%;
+  font-size: 2.4em;
+  margin-left: 10%;
+  color: #FFF;
+}
+
+.Loading {
+  font-size: 1.2em;
+  color: #FFF;
+  margin-left: 10%;
+  margin-top: 12%;
+}
+
+.SendFile {
+  display: flex;
+  direction: column;
+  position: fixed;
+  bottom: 0%;
+  margin-bottom: 6%;
+  min-height: 80px;
+  min-width: 400px;
+  margin-left: 10%;
+  background-image: linear-gradient(to right, #EE34D2 0%, #5946B2  51%, #5DADEC  100%);
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  border-radius: 10px;
+  border-style: none;
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.SendFile:hover {
+  background-position: right center;
+  color: #fff;
+  text-decoration: none;
+  color: #202020;
+}
+
+#sendLabel {
+  text-transform: uppercase;
+  font-size: 1.4em;
+  margin: auto;
+  margin-left: -100px;
+  cursor: pointer;
+}
+
+#sendIcon {
+  font-size: 1.6em;
+  margin: auto;
+  cursor: pointer;
+}
+
+.Header {
+  position: fixed;
+	left: 0;
+	top: 0;
+  color: #FFF;
+  overflow: hidden;
+	z-index: 2;
+  width: 100%;
+  min-height: 60px;
+  display: flex;
+	flex-direction: row-reverse;
+	align-items: flex-start;
+}
+
+.Header p{
+  padding-right: 6%;
+}
+
+.HeaderLink {
+  color: #FFF;
+  text-decoration: none;
+}
+
+.HeaderLink::after{
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #FFF;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+} 
+
+.HeaderLink:hover::after{
+  transform: scaleX(1);
+}
+
+@media only screen
+  and (max-width: 600px) {
+    .App {
+      background-image: url("./background/background-1-mobile.png");
+    }
+    
+    .SendFile {
+      margin-bottom: 25%;
+      margin-left: 10%;
+      min-width: 80%;
+    }
+    
+    #sendLabel {
+      text-transform: uppercase;
+      font-size: 1.6em;
+      margin: auto;
+      margin-left: -10px;
+    }
+    
+    #sendIcon {
+      font-size: 1.6em;
+      margin: auto;
+    }
+
+    .Title {
+      min-width: 50%;
+      max-width: 90%;
+      margin-top: 25%;
+      font-size: 3.4em;
+      margin-left: 10%;
+      color: #FFF;
+    }
+    
+    .SubTitle {
+      min-width: 400px;
+      margin-top: 20%;
+      font-size: 1.2em;
+      margin-left: 10%;
+      color: #FFF;
+    }
+    
+    .Header p{
+      font-size: 1.4em;
+    }
+}

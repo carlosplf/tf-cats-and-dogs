@@ -8,12 +8,16 @@ __pycache__/
 
 # Saved model
 model_save/*
+model/model_save/*
 
 # PatImages folder
 PetImages/*
 
 # Images for testing
 test_images/*
+
+# API status
+status_control/*.json
 
 # Log and CSVs
 logs/*
