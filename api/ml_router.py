@@ -55,3 +55,8 @@ def ml_runner_trainer_get_status(pid):
         return status
     else:
         return {"status": "error", "message": "check pid value"} 
+
+
+@ml_router.route('/ml_test', methods=["GET"])
+def ml_test_route():
+    return "OK"
