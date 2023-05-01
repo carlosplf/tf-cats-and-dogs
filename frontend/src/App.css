@@ -163,4 +163,8 @@
     .Header p{
       font-size: 1.4em;
     }
+
+    .Answer p{
+      width: 80%;
+    }
 }
