@@ -8,6 +8,7 @@ function App() {
     const [file, setFile] = useState(undefined);
     const [cat_dog, setAnimal] = useState("");
 
+    //Sentences generated with ChatGPT
     const cat_messages = [
         "Looks like we have a furry feline here! It's a cat!",
         "This image is purr-fectly classified as a cat!",
