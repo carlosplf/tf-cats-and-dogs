@@ -206,10 +206,8 @@ class APIMLRunner:
             logging.info("It's a Dog!. Probability: " + str(score) + "%")
         else:
             logging.info("It's a Cat!. Probability: " + str(score) + "%")
-        
-        del img_array
-        del img
-        del predictions
+
+        tf.keras.backend.clear_session()
         del seq_model
 
         return score
