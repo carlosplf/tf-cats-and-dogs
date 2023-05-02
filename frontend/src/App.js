@@ -105,11 +105,7 @@ function App() {
 
         fetch(api_address + '/model/vgg16/predict', {
                 method: 'POST',
-                body: data,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-                }
+                body: data
             }
         )
         .then((res) => res.json())
