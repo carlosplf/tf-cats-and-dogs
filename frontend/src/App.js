@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { Oval } from 'react-loading-icons'
 import {FaCamera} from 'react-icons/fa';
+import {FaGithub} from 'react-icons/fa';
 
 
 function App() {
@@ -131,7 +132,7 @@ function App() {
     return (
         <div className="App">
             <div className="Header">
-                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">GitHub</a></p>
+                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs"><FaGithub/></a></p>
             </div>
             <h1 className="Title">Cats and Dogs!</h1>
             <h2 className="SubTitle">CNN Model to classify Cats and Dogs.</h2>

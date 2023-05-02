@@ -84,7 +84,7 @@
   position: fixed;
 	left: 0;
 	top: 0;
-  margin-top: 20px;
+  margin-top: 10px;
   color: #FFF;
   overflow: hidden;
 	z-index: 2;
@@ -93,6 +93,7 @@
   display: flex;
 	flex-direction: row-reverse;
 	align-items: flex-start;
+  font-size: 1.8em;
 }
 
 .Header p{
