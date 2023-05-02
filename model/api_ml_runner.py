@@ -210,7 +210,8 @@ class APIMLRunner:
         del img_array
         del img
         del predictions
-        
+        del seq_model
+
         return score
 
     def run_predict(self, model_name, filename):
