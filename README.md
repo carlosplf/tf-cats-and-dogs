@@ -1,10 +1,10 @@
 # Tensorflow - Cats and Dogs
 
-Tensorflow implementation to classify Cats and Dogs.
+Tensorflow implementation to classify Cats and Dogs. Please don't ask me why I did this.
 
 Dataset used can be found [HERE](https://www.tensorflow.org/datasets/catalog/cats_vs_dogs).
 
-## Installation
+## Backend Installation
 
 Make sure you have Python 3.8 and pip installed. The project contains two requirements files, being one for ROCM and other for Apple M1 silicon.
 
@@ -39,9 +39,17 @@ Just run `run.py -t <n_epochs>` to train the model running all the images on the
 
 You can use `run.py -p <img_path>` to predict a single image, trying to tell if it is a cat or a dog. If you have a folder with some photos of cats and dogs, you can use `run.py -pa <folder_path>` and the software will try to predict all the images inside this folder.
 
+## Web version
+
+A web version of this project can be found [HERE](https://ml.carlosplf.com.br).
+
+I used Midjourney to generate the background image, and ChatGPT to generate the classification response phrases.
+
+![web screenshot](screenshots/home-screenshot.png "Project Schema")
+
 ## Models
 
 The software contains two CNN Sequential Model implementations. One is a custom Model build, based on the Keras VGG16 implementation, and the
 other is the [original Keras VGG16 Model](https://keras.io/api/applications/vgg/).
 
-To use the original Keras VGG16 Model, just use the `--vgg16` argument when calling `run.py`.
+To use the original Keras VGG16 Model, just use the `--vgg16` argument when running `run.py`.

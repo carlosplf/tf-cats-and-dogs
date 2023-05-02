@@ -84,6 +84,7 @@
   position: fixed;
 	left: 0;
 	top: 0;
+  margin-top: 20px;
   color: #FFF;
   overflow: hidden;
 	z-index: 2;
@@ -101,6 +102,7 @@
 .HeaderLink {
   color: #FFF;
   text-decoration: none;
+  font-size: 1.4em;
 }
 
 .HeaderLink::after{
@@ -126,7 +128,7 @@
     }
     
     .SendFile {
-      margin-bottom: 25%;
+      margin-bottom: 10%;
       margin-left: 10%;
       min-width: 80%;
     }
@@ -162,5 +164,9 @@
     
     .Header p{
       font-size: 1.4em;
+    }
+
+    .Answer p{
+      width: 80%;
     }
 }
