@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { Oval } from 'react-loading-icons'
 import {FaCamera} from 'react-icons/fa';
+import {FaGithub} from 'react-icons/fa';
 
 
 function App() {
@@ -102,13 +103,9 @@ function App() {
 
         console.log(api_address);
 
-        fetch(api_address + '/model/vgg16/predict', {
+        fetch(api_address + '/model/predict', {
                 method: 'POST',
-                body: data,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-                }
+                body: data
             }
         )
         .then((res) => res.json())
@@ -131,7 +128,7 @@ function App() {
     return (
         <div className="App">
             <div className="Header">
-                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">GitHub</a></p>
+                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs"><FaGithub/></a></p>
             </div>
             <h1 className="Title">Cats and Dogs!</h1>
             <h2 className="SubTitle">CNN Model to classify Cats and Dogs.</h2>
