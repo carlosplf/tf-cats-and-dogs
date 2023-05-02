@@ -8,7 +8,6 @@ import json
 from random import randrange
 from model.SequentialModel import SequentialModel
 from csv_log_writer import csv_log_writer
-from file_checker import file_checker
 
 
 # Adjust TF log level and avoid INFO messages.
