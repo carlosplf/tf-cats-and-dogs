@@ -57,7 +57,7 @@ function App() {
             return(
                 <div className="Loading">
                     <Oval strokeWidth={4}/>
-                    <p>Loading...</p>
+                    <p>Processing image...</p>
                 </div>
             );
         }
@@ -132,7 +132,6 @@ function App() {
         <div className="App">
             <div className="Header">
                 <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">GitHub</a></p>
-                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">About</a></p>
             </div>
             <h1 className="Title">Cats and Dogs!</h1>
             <h2 className="SubTitle">CNN Model to classify Cats and Dogs.</h2>
