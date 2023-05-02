@@ -1,4 +1,6 @@
 import logging
+import gc 
+
 from flask import Blueprint
 from flask import request
 from model.api_ml_runner import APIMLRunner
@@ -6,12 +8,16 @@ from model.api_ml_runner import APIMLRunner
 
 MAX_EPOCHS = 20
 UPLOAD_FOLDER = "upload"
+MODEL_NAME = "vgg16"
 
 ml_router = Blueprint("ml_router", __name__)
 
+#Load CNN model
+ml_runner = APIMLRunner(MODEL_NAME)
 
-@ml_router.route('/model/<model_name>/train', methods=["POST"])
-def ml_runner_train(model_name):
+
+@ml_router.route('/model/train', methods=["POST"])
+def ml_runner_train():
     data = request.get_json()
     n_epochs = data.get("n_epochs", 0)
 
@@ -19,15 +25,15 @@ def ml_runner_train(model_name):
         return {"status": "Not running", "reason": "invalid n_epochs key"}
     else:
         ml_runner = APIMLRunner()
-        pid = ml_runner.run_training(model_name, n_epochs)
+        pid = ml_runner.run_training(n_epochs)
         if pid:
             return {"status": "Running", "pid": pid}
         else:
             return {"status": "Not running", "pid": pid, "reason": "Can't start thread."}
 
 
-@ml_router.route('/model/<model_name>/predict', methods=["POST"])
-def ml_runner_predict(model_name):
+@ml_router.route('/model/predict', methods=["POST"])
+def ml_runner_predict():
     
     file = request.files.get("upload_file", None)
 
@@ -35,10 +41,13 @@ def ml_runner_predict(model_name):
         logging.info("File uploaded. Storing at upload folder.")
         filename = UPLOAD_FOLDER + "/" + file.filename
         file.save(filename)
-        ml_runner = APIMLRunner()
+        results = str(ml_runner.run_predict(filename))
+
+        gc.collect()
+
         return {
             "status": "ok",
-            "probability": str(ml_runner.run_predict(model_name, filename))
+            "probability": results
         }
     else:
         return {

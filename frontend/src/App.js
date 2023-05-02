@@ -103,7 +103,7 @@ function App() {
 
         console.log(api_address);
 
-        fetch(api_address + '/model/vgg16/predict', {
+        fetch(api_address + '/model/predict', {
                 method: 'POST',
                 body: data
             }
