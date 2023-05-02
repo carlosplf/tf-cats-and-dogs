@@ -207,6 +207,10 @@ class APIMLRunner:
         else:
             logging.info("It's a Cat!. Probability: " + str(score) + "%")
         
+        del img_array
+        del img
+        del predictions
+        
         return score
 
     def run_predict(self, model_name, filename):
