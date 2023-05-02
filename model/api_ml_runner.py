@@ -177,7 +177,7 @@ class APIMLRunner:
             "Pid": thread_pid
         }
 
-        _write_status_to_file(thread_pid, status)
+        self._write_status_to_file(thread_pid, status)
         return True
 
     def predict_from_file(self, seq_model, img_filename):
