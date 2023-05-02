@@ -61,7 +61,6 @@
 
 .SendFile:hover {
   background-position: right center;
-  color: #fff;
   text-decoration: none;
   color: #202020;
 }
@@ -114,9 +113,27 @@
     }
     
     .SendFile {
+      display: flex;
+      direction: column;
+      position: fixed;
+      bottom: 0%;
       margin-bottom: 10%;
-      margin-left: 10%;
       min-width: 80%;
+      margin-left: 10%;
+      background-image: linear-gradient(to right, #EE34D2 0%, #5946B2  51%, #5DADEC  100%);
+      transition: none !important;
+      background-size: 200% auto;
+      color: white;
+      border-radius: 10px;
+      border-style: none;
+      cursor: pointer;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+    .SendFile:hover {
+      background-position: left top;
+      color: #fff;
+      text-decoration: none;
     }
     
     #sendLabel {
