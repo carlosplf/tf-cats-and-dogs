@@ -131,11 +131,11 @@ function App() {
         const probability = parseFloat(data.probability);
         if(probability < 50.0){
             console.log("It's a CAT!");
-            //setAnimal("Cat");
+            setAnimal("Cat");
         }
         else{
             console.log("It's a DOG!");
-            //setAnimal("Dog");
+            setAnimal("Dog");
         }
     }
     
