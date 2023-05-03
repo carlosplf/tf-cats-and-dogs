@@ -158,9 +158,10 @@
     }
     
     .SubTitle {
-      min-width: 400px;
+      min-width: 200px;
+      max-width: 80%;
       margin-top: 20%;
-      font-size: 1.2em;
+      font-size: 1.4em;
       margin-left: 10%;
       color: #FFF;
     }
@@ -170,8 +171,12 @@
     }
 
     .HeaderLink{
-      font-size: 1.4em;
+      font-size: 1.8em;
       margin-right: 20px;
+    }
+
+    .HeaderLink:hover{
+      font-size: 1.8em;
     }
 
     .Answer p{
