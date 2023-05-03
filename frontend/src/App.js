@@ -131,7 +131,7 @@ function App() {
                 <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs"><FaGithub/></a></p>
             </div>
             <h1 className="Title">Cats and Dogs!</h1>
-            <h2 className="SubTitle">CNN Model to classify Cats and Dogs.</h2>
+            <h2 className="SubTitle">Machine Learning model to classify Cats and Dogs.</h2>
             {get_answer()}
             <div>
                 <label htmlFor="inputFile" className="SendFile">
