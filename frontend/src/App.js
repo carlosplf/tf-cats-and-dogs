@@ -1,6 +1,5 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import { Oval } from 'react-loading-icons'
 import {FaCamera} from 'react-icons/fa';
 import {FaGithub} from 'react-icons/fa';
 import { PongSpinner } from "react-spinners-kit";

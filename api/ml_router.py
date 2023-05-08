@@ -1,5 +1,5 @@
 import logging
-import gc 
+import gc
 
 from flask import Blueprint
 from flask import request
@@ -12,7 +12,7 @@ MODEL_NAME = "vgg16"
 
 ml_router = Blueprint("ml_router", __name__)
 
-#Load CNN model
+# Load CNN model
 ml_runner = APIMLRunner(MODEL_NAME)
 
 
@@ -21,7 +21,7 @@ def ml_runner_train():
     data = request.get_json()
     n_epochs = data.get("n_epochs", 0)
 
-    if(n_epochs <= 0 or n_epochs > MAX_EPOCHS):
+    if (n_epochs <= 0 or n_epochs > MAX_EPOCHS):
         return {"status": "Not running", "reason": "invalid n_epochs key"}
     else:
         ml_runner = APIMLRunner()
@@ -29,12 +29,16 @@ def ml_runner_train():
         if pid:
             return {"status": "Running", "pid": pid}
         else:
-            return {"status": "Not running", "pid": pid, "reason": "Can't start thread."}
+            return {
+                "status": "Not running",
+                "pid": pid,
+                "reason": "Can't start thread."
+            }
 
 
 @ml_router.route('/model/predict', methods=["POST"])
 def ml_runner_predict():
-    
+
     file = request.files.get("upload_file", None)
 
     if file:
@@ -63,7 +67,7 @@ def ml_runner_trainer_get_status(pid):
     if status:
         return status
     else:
-        return {"status": "error", "message": "check pid value"} 
+        return {"status": "error", "message": "check pid value"}
 
 
 @ml_router.route('/ml_test', methods=["GET"])

@@ -11,7 +11,7 @@ from csv_log_writer import csv_log_writer
 
 
 # Adjust TF log level and avoid INFO messages.
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 DATA_DIR = "./PetImages"
@@ -28,11 +28,10 @@ class APIMLRunner:
     def __init__(self, model_name):
         self.__config_log()
         self.model_name = model_name
-        self.create_model(model_name)
+        self.seq_model = self.create_model(model_name)
 
-        #TODO: user should receive an alert in case of missing trained model.
+        # TODO: user should receive an alert in case of missing trained model.
         self.seq_model.load(MODEL_SAVE_PATH)
-
 
     def __config_log(self):
         logging.basicConfig(
@@ -78,16 +77,17 @@ class APIMLRunner:
         return val_ds
 
     def create_model(self, model_name):
-        self.seq_model = SequentialModel()
+        seq_model = SequentialModel()
 
         if model_name == "vgg16":
-            logging.warning("VGG16 model uses a significant bigger amount of memory. Check hardware and batch size.")
-            self.seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
+            logging.warning("VGG16 model uses a significant bigger "
+                            "amount of memory. Check hardware and batch size.")
+            seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
 
         if model_name == "custom":
-            self.seq_model.build(IMG_HEIGHT, IMG_WIDTH)
+            seq_model.build(IMG_HEIGHT, IMG_WIDTH)
 
-        return None
+        return seq_model
 
     def train_model(self, n_epochs, train_ds, val_ds):
         history = self.seq_model.model.fit(
@@ -105,11 +105,11 @@ class APIMLRunner:
     def run_training(self, n_epochs):
 
         logging.info("Starting training...")
-       
+
         train_ds = self.create_train_dataset()
         val_ds = self.create_validation_dataset()
 
-        #In case we have a loaded model, create a new one.
+        # In case we have a loaded model, create a new one.
         self.seq_model = self.create_model(self.model_name)
 
         if self.seq_model is None:
@@ -118,8 +118,8 @@ class APIMLRunner:
         thread_pid = self._create_pid()
 
         new_thread = threading.Thread(
-            target = self.training_function,
-            args = (
+            target=self.training_function,
+            args=(
                 thread_pid,
                 n_epochs,
                 train_ds,
@@ -127,11 +127,11 @@ class APIMLRunner:
             ),
             daemon=True
         )
-        
+
         try:
             logging.debug("Starting a new thread for training...")
             new_thread.start()
-            return thread_pid 
+            return thread_pid
         except Exception as e:
             logging.error(str(e))
             return None
@@ -150,6 +150,7 @@ class APIMLRunner:
                 return json.load(f)
         except Exception as e:
             logging.warning("Error while searching for status pid " + str(pid))
+            logging.warning(e)
             return None
 
     def training_function(self, thread_pid, n_epochs, train_ds, val_ds):
@@ -164,15 +165,15 @@ class APIMLRunner:
         }
 
         self._write_status_to_file(thread_pid, status)
-        
+
         history = self.train_model(n_epochs, train_ds, val_ds)
-        
-        self.seq_model.save(MODEL_SAVE_PATH) 
+
+        self.seq_model.save(MODEL_SAVE_PATH)
 
         csv_log_writer.write_log(history.history, CSV_LOG_FILE)
 
         logging.info("Finished training.")
-        
+
         status = {
             "status": "Stopped",
             "Message": "Finished training",
@@ -219,21 +220,20 @@ class APIMLRunner:
     def run_predict(self, filename):
 
         logging.info("Predicting image...")
-        
+
         if self.seq_model is None:
             logging.warning("Model not built or loaded. Aborting...")
             return None
-        
+
         return self.predict_from_file(filename)
 
     def run_predict_all(self, folder_path):
 
         logging.info("Predicting all images...")
-        
+
         if self.seq_model is None:
             logging.warning("Model not built or loaded. Aborting...")
             return None
-        
+
         for f in os.listdir(folder_path):
             self.predict_from_file(folder_path + "/" + f)
-
