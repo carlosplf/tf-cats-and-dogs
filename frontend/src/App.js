@@ -2,11 +2,14 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { Oval } from 'react-loading-icons'
 import {FaCamera} from 'react-icons/fa';
+import {FaGithub} from 'react-icons/fa';
+import { PongSpinner } from "react-spinners-kit";
 
 
 function App() {
     const [file, setFile] = useState(undefined);
     const [cat_dog, setAnimal] = useState("");
+    const [confidence, setConfidence] = useState(0.0);
 
     //Sentences generated with ChatGPT
     const cat_messages = [
@@ -35,6 +38,19 @@ function App() {
         "Fur real, this image is a paw-some dog!",
     ];
 
+    const loading_messages = [
+        "Don't worry, we'll sniff out whether it's a cat or dog in no time!",
+        "We've sent the image to our secret lab for analysis. Stay tuned for the results!",
+        "Our machine learning system is currently chasing its tail while analyzing the image. Results coming soon!",
+        "We're currently barking up the right tree to determine if it's a cat or dog!",
+        "Hold your paws, we're fetching the results for you!",
+        "Our team of highly trained AI pets are working hard to classify your image as a cat or dog.",
+        "Our system is furiously analyzing your image. We'll have the answer in a jiffy!",
+        "Our AI is paw-sitively excited to classify your image as a cat or dog.",
+        "We're not kitten around, we take our cat-dog classifications seriously!",
+        "Our AI is like a dog with a bone when it comes to classifying images. Results are on their way!"
+    ]
+
     const handleFileChange = (e) => {
         if (e.target.files) {
             setFile(e.target.files[0]);
@@ -42,8 +58,8 @@ function App() {
         }
     }
 
+    //When some state is changed, this hook is called.
     useEffect(()=> {
-        //When some state is changed, this hook is called.
         uploadImage();
     })
 
@@ -56,8 +72,8 @@ function App() {
         else if (cat_dog === "" && file){
             return(
                 <div className="Loading">
-                    <Oval strokeWidth={4}/>
-                    <p>Processing image...</p>
+                    <PongSpinner size={120} color="#FFF" loading={true} />
+                    <p>{loading_messages[Math.floor(Math.random()*loading_messages.length)]}</p>
                 </div>
             );
         }
@@ -65,6 +81,7 @@ function App() {
             return(
                 <div className="Answer">
                     <p>{chose_sentence()}</p>
+                    <p id="confidence_score">Confidence score: {confidence.toFixed(2)}%</p>
                 </div>
             );
         }
@@ -102,13 +119,9 @@ function App() {
 
         console.log(api_address);
 
-        fetch(api_address + '/model/vgg16/predict', {
+        fetch(api_address + '/model/predict', {
                 method: 'POST',
-                body: data,
-                headers: {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-                }
+                body: data
             }
         )
         .then((res) => res.json())
@@ -121,20 +134,22 @@ function App() {
         if(probability < 50.0){
             console.log("It's a CAT!");
             setAnimal("Cat");
+            setConfidence(100-probability)
         }
         else{
             console.log("It's a DOG!");
             setAnimal("Dog");
+            setConfidence(probability);
         }
     }
     
     return (
         <div className="App">
             <div className="Header">
-                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs">GitHub</a></p>
+                <p><a className="HeaderLink" href="https://github.com/carlosplf/tf-cats-and-dogs"><FaGithub/></a></p>
             </div>
             <h1 className="Title">Cats and Dogs!</h1>
-            <h2 className="SubTitle">CNN Model to classify Cats and Dogs.</h2>
+            <h2 className="SubTitle">Machine Learning model to classify Cats and Dogs.</h2>
             {get_answer()}
             <div>
                 <label htmlFor="inputFile" className="SendFile">

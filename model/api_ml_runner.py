@@ -1,6 +1,6 @@
 import tensorflow as tf
 import os
-import argparse
+import gc
 import logging
 import threading
 import json
@@ -8,7 +8,6 @@ import json
 from random import randrange
 from model.SequentialModel import SequentialModel
 from csv_log_writer import csv_log_writer
-from file_checker import file_checker
 
 
 # Adjust TF log level and avoid INFO messages.
@@ -26,8 +25,14 @@ AVAILABLE_MODELS = ["vgg16", "custom"]
 
 
 class APIMLRunner:
-    def __init__(self):
+    def __init__(self, model_name):
         self.__config_log()
+        self.model_name = model_name
+        self.create_model(model_name)
+
+        #TODO: user should receive an alert in case of missing trained model.
+        self.seq_model.load(MODEL_SAVE_PATH)
+
 
     def __config_log(self):
         logging.basicConfig(
@@ -73,21 +78,19 @@ class APIMLRunner:
         return val_ds
 
     def create_model(self, model_name):
-        seq_model = SequentialModel()
+        self.seq_model = SequentialModel()
 
         if model_name == "vgg16":
             logging.warning("VGG16 model uses a significant bigger amount of memory. Check hardware and batch size.")
-            seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
-            return seq_model
+            self.seq_model.build_vgg16(IMG_HEIGHT, IMG_WIDTH)
 
         if model_name == "custom":
-            seq_model.build(IMG_HEIGHT, IMG_WIDTH)
-            return seq_model
+            self.seq_model.build(IMG_HEIGHT, IMG_WIDTH)
 
         return None
 
-    def train_model(self, n_epochs, seq_model, train_ds, val_ds):
-        history = seq_model.model.fit(
+    def train_model(self, n_epochs, train_ds, val_ds):
+        history = self.seq_model.model.fit(
             train_ds,
             validation_data=val_ds,
             epochs=n_epochs,
@@ -99,16 +102,17 @@ class APIMLRunner:
         max_pid_value = 1000000
         return randrange(max_pid_value)
 
-    def run_training(self, model_name, n_epochs):
+    def run_training(self, n_epochs):
 
         logging.info("Starting training...")
        
         train_ds = self.create_train_dataset()
         val_ds = self.create_validation_dataset()
 
-        seq_model = self.create_model(model_name)
+        #In case we have a loaded model, create a new one.
+        self.seq_model = self.create_model(self.model_name)
 
-        if seq_model is None:
+        if self.seq_model is None:
             return None
 
         thread_pid = self._create_pid()
@@ -117,7 +121,6 @@ class APIMLRunner:
             target = self.training_function,
             args = (
                 thread_pid,
-                seq_model,
                 n_epochs,
                 train_ds,
                 val_ds
@@ -149,7 +152,7 @@ class APIMLRunner:
             logging.warning("Error while searching for status pid " + str(pid))
             return None
 
-    def training_function(self, thread_pid, seq_model, n_epochs, train_ds, val_ds):
+    def training_function(self, thread_pid, n_epochs, train_ds, val_ds):
 
         logging.info("Training function running...")
         logging.info("PID: " + str(thread_pid))
@@ -162,9 +165,9 @@ class APIMLRunner:
 
         self._write_status_to_file(thread_pid, status)
         
-        history = self.train_model(n_epochs, seq_model, train_ds, val_ds)
+        history = self.train_model(n_epochs, train_ds, val_ds)
         
-        seq_model.save(MODEL_SAVE_PATH) 
+        self.seq_model.save(MODEL_SAVE_PATH) 
 
         csv_log_writer.write_log(history.history, CSV_LOG_FILE)
 
@@ -177,14 +180,13 @@ class APIMLRunner:
             "Pid": thread_pid
         }
 
-        _write_status_to_file(thread_pid, status)
+        self._write_status_to_file(thread_pid, status)
         return True
 
-    def predict_from_file(self, seq_model, img_filename):
+    def predict_from_file(self, img_filename):
         """
         Load an image and predict using the trained Model.
         Args:
-            seq_model: SequentialModel class instance.
             img_filename: name of the img file to be loaded.
         Return:
             (float) classification score.
@@ -198,43 +200,40 @@ class APIMLRunner:
         img_array = tf.keras.preprocessing.image.img_to_array(img)
         img_array = tf.expand_dims(img_array, 0)
 
-        predictions = seq_model.model.predict(img_array)
+        predictions = self.seq_model.model(img_array)
 
-        score = predictions[0][0]*100
+        result_tensor = predictions[0][0]*100
+        score = tf.keras.backend.get_value(result_tensor)
 
         if score > 50:
             logging.info("It's a Dog!. Probability: " + str(score) + "%")
         else:
             logging.info("It's a Cat!. Probability: " + str(score) + "%")
-        
+
+        del img_array
+        del img
+        gc.collect()
+
         return score
 
-    def run_predict(self, model_name, filename):
+    def run_predict(self, filename):
 
         logging.info("Predicting image...")
-
-        seq_model = self.create_model(model_name)
-
-        # Load model weights from Tensorflow saving.
-        seq_model.load(MODEL_SAVE_PATH)
         
-        if seq_model is None:
+        if self.seq_model is None:
+            logging.warning("Model not built or loaded. Aborting...")
             return None
         
-        return self.predict_from_file(seq_model, filename)
+        return self.predict_from_file(filename)
 
-    def run_predict_all(self, model_name, folder_path):
+    def run_predict_all(self, folder_path):
 
         logging.info("Predicting all images...")
-
-        seq_model = self.create_model(model_name)
         
-        if seq_model is None:
+        if self.seq_model is None:
+            logging.warning("Model not built or loaded. Aborting...")
             return None
-
-        # Load model weights from Tensorflow saving.
-        seq_model.load(MODEL_SAVE_PATH)
         
         for f in os.listdir(folder_path):
-            self.predict_from_file(seq_model, folder_path + "/" + f)
+            self.predict_from_file(folder_path + "/" + f)
 
