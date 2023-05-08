@@ -9,6 +9,7 @@ import { PongSpinner } from "react-spinners-kit";
 function App() {
     const [file, setFile] = useState(undefined);
     const [cat_dog, setAnimal] = useState("");
+    const [confidence, setConfidence] = useState(0.0);
 
     //Sentences generated with ChatGPT
     const cat_messages = [
@@ -80,6 +81,7 @@ function App() {
             return(
                 <div className="Answer">
                     <p>{chose_sentence()}</p>
+                    <p id="confidence_score">Confidence score: {confidence.toFixed(2)}%</p>
                 </div>
             );
         }
@@ -132,10 +134,12 @@ function App() {
         if(probability < 50.0){
             console.log("It's a CAT!");
             setAnimal("Cat");
+            setConfidence(100-probability)
         }
         else{
             console.log("It's a DOG!");
             setAnimal("Dog");
+            setConfidence(probability);
         }
     }
     
